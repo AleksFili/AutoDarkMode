@@ -4,6 +4,11 @@ $ErrorActionPreference = 'Stop'
 . "$PSScriptRoot\Solar.ps1"
 
 $location = Get-Content -LiteralPath "$PSScriptRoot\location.json" -Raw | ConvertFrom-Json
+foreach ($coordinate in $location.Latitude, $location.Longitude) {
+    if ($coordinate -isnot [int] -and $coordinate -isnot [long] -and $coordinate -isnot [double] -and $coordinate -isnot [decimal]) {
+        throw 'location.json must contain numeric Latitude and Longitude. Run Install.ps1 to configure them.'
+    }
+}
 $schedule = Get-ThemeSchedule ([datetimeoffset]::Now) $location.Latitude $location.Longitude
 if ($Preview) {
     [pscustomobject]@{
